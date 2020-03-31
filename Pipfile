@@ -1,0 +1,17 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+numpy = "*"
+pandas = "*"
+scikit-learn = "*"
+jupyterlab = "*"
+matplotlib = "==3.1.2"
+seaborn = "==0.9.0"
+
+[requires]
+python_version = "3.6"

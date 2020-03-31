@@ -121,7 +121,7 @@ window.onload = wrap_img;
 
     
       
-        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+        <div class="pt-5 d-flex flex-justify-end">
           <div class="px-2">
 
     <a href="https://github.com/cyyeh/blog/tree/master/_notebooks/2020-03-31-kaggle-titanic.ipynb" role="button" target="_blank">
@@ -213,9 +213,23 @@ window.onload = wrap_img;
 <p>
 </p>
 <center>
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/8yZMXCaFshs" frameborder="0" allowfullscreen=""></iframe>
+    <iframe id="youtube-iframe" src="https://www.youtube.com/embed/8yZMXCaFshs" frameborder="0" allowfullscreen=""></iframe>
 </center>
 
+<style>
+    @media screen and (min-width: 768px) {
+        #youtube-iframe {
+            width: 560px;
+            height: 315px;
+        }
+    }
+    @media screen and (max-width: 767px) {
+        #youtube-iframe {
+            width: 100%;
+            height: 300px;
+        }
+    }
+</style>
 
 </div>
 </div>
@@ -379,13 +393,11 @@ Etc.</code></pre>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#collapse-hide</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="o">%</span><span class="k">matplotlib</span> inline
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">'figure.figsize'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">8</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">'font.size'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">14</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">'axes.grid'</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="kn">import</span> <span class="nn">collections</span>
 
@@ -399,6 +411,33 @@ Etc.</code></pre>
 </div>
 
     </details>
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Initialize plotting parameters</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">'figure.figsize'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">8</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">'font.size'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">14</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">'axes.grid'</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
 </div>
     
 
@@ -436,9 +475,9 @@ Etc.</code></pre>
 <div class="output_area">
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Downloading titanic.zip to /Users/cyyeh/Desktop/TYCS/cyyeh.github.io/_notebooks
+<pre>Downloading titanic.zip to /Users/cyyeh/Desktop/TYCS/blog/_notebooks
   0%|                                               | 0.00/34.1k [00:00&lt;?, ?B/s]
-100%|██████████████████████████████████████| 34.1k/34.1k [00:00&lt;00:00, 4.45MB/s]
+100%|██████████████████████████████████████| 34.1k/34.1k [00:00&lt;00:00, 1.76MB/s]
 Archive:  titanic.zip
   inflating: ./datasets/gender_submission.csv  
   inflating: ./datasets/test.csv     

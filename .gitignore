@@ -16,3 +16,6 @@ _notebooks/.DS_Store
 _posts/.DS_Store
 _notebooks/*.zip
 _notebooks/datasets
+.ipynb_checkpoints
+_notebooks/.ipynb_checkpoints
+settings.ini

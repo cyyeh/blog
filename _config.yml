@@ -41,6 +41,9 @@ minima:
   social_links:
     github: cyyeh
 
+# permalinks
+permalink: /:title:output_ext
+
 # Set this to true to get LaTeX math equation support
 use_math: 
 

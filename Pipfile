@@ -12,6 +12,7 @@ scikit-learn = "*"
 jupyterlab = "*"
 matplotlib = "==3.1.2"
 seaborn = "==0.9.0"
+fastprogress = "*"
 
 [requires]
 python_version = "3.6"

@@ -109,7 +109,7 @@ window.onload = wrap_img;
        • <span class="read-time" title="Estimated read time">
     
     
-      10 min read
+      14 min read
     
 </span></p>
 
@@ -189,6 +189,14 @@ window.onload = wrap_img;
 <li class="toc-entry toc-h4"><a href="#Scatter-Plots">Scatter Plots </a></li>
 </ul>
 </li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Feature-Engineering">Feature Engineering </a>
+<ul>
+<li class="toc-entry toc-h4"><a href="#Choose-appropriate-features">Choose appropriate features </a></li>
+<li class="toc-entry toc-h4"><a href="#Dealing-with-missing-values">Dealing with missing values </a></li>
+<li class="toc-entry toc-h4"><a href="#Some-mathematical-transformations-on-features">Some mathematical transformations on features </a></li>
+<li class="toc-entry toc-h4"><a href="#Encoding-categorical-feature-columns">Encoding categorical feature columns </a></li>
 </ul>
 </li>
 <li class="toc-entry toc-h2"><a href="#Modeling-and-Evaluation">Modeling and Evaluation </a>
@@ -539,7 +547,7 @@ Etc.</code></pre>
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Downloading titanic.zip to /Users/cyyeh/Desktop/TYCS/blog/_notebooks
   0%|                                               | 0.00/34.1k [00:00&lt;?, ?B/s]
-100%|██████████████████████████████████████| 34.1k/34.1k [00:00&lt;00:00, 3.85MB/s]
+100%|██████████████████████████████████████| 34.1k/34.1k [00:00&lt;00:00, 5.36MB/s]
 Archive:  titanic.zip
   inflating: ./datasets/gender_submission.csv  
   inflating: ./datasets/test.csv     
@@ -1125,7 +1133,12 @@ Archive:  titanic.zip
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#collapse-hide</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'training data'</span><span class="p">)</span>
 <span class="n">train_df</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'tesitng data'</span><span class="p">)</span>
+<span class="n">test_df</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
 </pre></div>
 
     </div>
@@ -1139,7 +1152,8 @@ Archive:  titanic.zip
 <div class="output_area">
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>&lt;class 'pandas.core.frame.DataFrame'&gt;
+<pre>training data
+&lt;class 'pandas.core.frame.DataFrame'&gt;
 RangeIndex: 891 entries, 0 to 890
 Data columns (total 12 columns):
  #   Column       Non-Null Count  Dtype  
@@ -1158,6 +1172,26 @@ Data columns (total 12 columns):
  11  Embarked     889 non-null    object 
 dtypes: float64(2), int64(5), object(5)
 memory usage: 83.7+ KB
+
+tesitng data
+&lt;class 'pandas.core.frame.DataFrame'&gt;
+RangeIndex: 418 entries, 0 to 417
+Data columns (total 11 columns):
+ #   Column       Non-Null Count  Dtype  
+---  ------       --------------  -----  
+ 0   PassengerId  418 non-null    int64  
+ 1   Pclass       418 non-null    int64  
+ 2   Name         418 non-null    object 
+ 3   Sex          418 non-null    object 
+ 4   Age          332 non-null    float64
+ 5   SibSp        418 non-null    int64  
+ 6   Parch        418 non-null    int64  
+ 7   Ticket       418 non-null    object 
+ 8   Fare         417 non-null    float64
+ 9   Cabin        91 non-null     object 
+ 10  Embarked     418 non-null    object 
+dtypes: float64(2), int64(4), object(5)
+memory usage: 36.0+ KB
 </pre>
 </div>
 </div>
@@ -2024,6 +2058,526 @@ Name: Survived, dtype: int64</pre>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>We can easily observe that more adults who had higher fare were survived than those who had lower fare.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Feature-Engineering">
+<a class="anchor" href="#Feature-Engineering" aria-hidden="true"><span class="octicon octicon-link"></span></a>Feature Engineering<a class="anchor-link" href="#Feature-Engineering"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Since machine learning algorithms only take numerical data, so we need to make sure every feature has appropriate form before modeling. This process is called feature engineering, including some common operations like dealing with missing values, choosing appropriate features to feed into models, some mathematical transformation on features, encoding categorical feature columns, etc.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p></p>
+<div class="flash flash-success">
+    <svg class="octicon octicon-checklist octicon octicon-checklist" viewbox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M16 8.5l-6 6-3-3L8.5 10l1.5 1.5L14.5 7 16 8.5zM5.7 12.2l.8.8H2c-.55 0-1-.45-1-1V3c0-.55.45-1 1-1h7c.55 0 1 .45 1 1v6.5l-.8-.8c-.39-.39-1.03-.39-1.42 0L5.7 10.8a.996.996 0 000 1.41v-.01zM4 4h5V3H4v1zm0 2h5V5H4v1zm0 2h3V7H4v1zM3 9H2v1h1V9zm0-2H2v1h1V7zm0-2H2v1h1V5zm0-2H2v1h1V3z"></path></svg>
+    <strong>Tip: </strong>What operations to take in feature engineering plays an important role in influencing model performance, so we need to choose appropriate operations based on what model we decide to use.
+</div>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Choose-appropriate-features">
+<a class="anchor" href="#Choose-appropriate-features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Choose appropriate features<a class="anchor-link" href="#Choose-appropriate-features"> </a>
+</h4>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>There are two columns(Name, Ticket) with text features, and it's more complicated. So, I'll discard them first for the baseline model. The PassengerId column doesn't correlate with other featrues, I'll discard them as they look like doesn't have the true meaning.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<details class="description">
+      <summary class="btn btn-sm" data-open="Hide Code" data-close="Show Code"></summary>
+        <p></p>
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#collapse-hide</span>
+<span class="n">label</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'Survived'</span><span class="p">]</span>
+<span class="n">features</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'Pclass'</span><span class="p">,</span> <span class="s1">'Sex'</span><span class="p">,</span> <span class="s1">'Age'</span><span class="p">,</span> <span class="s1">'SibSp'</span><span class="p">,</span> <span class="s1">'Parch'</span><span class="p">,</span> <span class="s1">'Ticket'</span><span class="p">,</span> <span class="s1">'Fare'</span><span class="p">,</span> <span class="s1">'Cabin'</span><span class="p">,</span> <span class="s1">'Embarked'</span><span class="p">]</span>
+<span class="n">train_df_</span> <span class="o">=</span> <span class="n">train_df</span><span class="p">[</span><span class="n">features</span><span class="o">+</span><span class="n">label</span><span class="p">]</span>
+<span class="n">test_df_</span> <span class="o">=</span> <span class="n">test_df</span><span class="p">[</span><span class="n">features</span><span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"new training data"</span><span class="p">)</span>
+<span class="n">train_df_</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"new testing data"</span><span class="p">)</span>
+<span class="n">test_df_</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+    </details>
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>new training data
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Pclass</th>
+      <th>Sex</th>
+      <th>Age</th>
+      <th>SibSp</th>
+      <th>Parch</th>
+      <th>Ticket</th>
+      <th>Fare</th>
+      <th>Cabin</th>
+      <th>Embarked</th>
+      <th>Survived</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>3</td>
+      <td>male</td>
+      <td>22.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>A/5 21171</td>
+      <td>7.2500</td>
+      <td>NaN</td>
+      <td>S</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1</td>
+      <td>female</td>
+      <td>38.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>PC 17599</td>
+      <td>71.2833</td>
+      <td>C85</td>
+      <td>C</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>female</td>
+      <td>26.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>STON/O2. 3101282</td>
+      <td>7.9250</td>
+      <td>NaN</td>
+      <td>S</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1</td>
+      <td>female</td>
+      <td>35.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>113803</td>
+      <td>53.1000</td>
+      <td>C123</td>
+      <td>S</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>3</td>
+      <td>male</td>
+      <td>35.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>373450</td>
+      <td>8.0500</td>
+      <td>NaN</td>
+      <td>S</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>886</th>
+      <td>2</td>
+      <td>male</td>
+      <td>27.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>211536</td>
+      <td>13.0000</td>
+      <td>NaN</td>
+      <td>S</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>887</th>
+      <td>1</td>
+      <td>female</td>
+      <td>19.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>112053</td>
+      <td>30.0000</td>
+      <td>B42</td>
+      <td>S</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>888</th>
+      <td>3</td>
+      <td>female</td>
+      <td>NaN</td>
+      <td>1</td>
+      <td>2</td>
+      <td>W./C. 6607</td>
+      <td>23.4500</td>
+      <td>NaN</td>
+      <td>S</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>889</th>
+      <td>1</td>
+      <td>male</td>
+      <td>26.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>111369</td>
+      <td>30.0000</td>
+      <td>C148</td>
+      <td>C</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>890</th>
+      <td>3</td>
+      <td>male</td>
+      <td>32.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>370376</td>
+      <td>7.7500</td>
+      <td>NaN</td>
+      <td>Q</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+<p>891 rows × 10 columns</p>
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>new testing data
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Pclass</th>
+      <th>Sex</th>
+      <th>Age</th>
+      <th>SibSp</th>
+      <th>Parch</th>
+      <th>Ticket</th>
+      <th>Fare</th>
+      <th>Cabin</th>
+      <th>Embarked</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>3</td>
+      <td>male</td>
+      <td>34.5</td>
+      <td>0</td>
+      <td>0</td>
+      <td>330911</td>
+      <td>7.8292</td>
+      <td>NaN</td>
+      <td>Q</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>3</td>
+      <td>female</td>
+      <td>47.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>363272</td>
+      <td>7.0000</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2</td>
+      <td>male</td>
+      <td>62.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>240276</td>
+      <td>9.6875</td>
+      <td>NaN</td>
+      <td>Q</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>3</td>
+      <td>male</td>
+      <td>27.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>315154</td>
+      <td>8.6625</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>3</td>
+      <td>female</td>
+      <td>22.0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>3101298</td>
+      <td>12.2875</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>413</th>
+      <td>3</td>
+      <td>male</td>
+      <td>NaN</td>
+      <td>0</td>
+      <td>0</td>
+      <td>A.5. 3236</td>
+      <td>8.0500</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>414</th>
+      <td>1</td>
+      <td>female</td>
+      <td>39.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>PC 17758</td>
+      <td>108.9000</td>
+      <td>C105</td>
+      <td>C</td>
+    </tr>
+    <tr>
+      <th>415</th>
+      <td>3</td>
+      <td>male</td>
+      <td>38.5</td>
+      <td>0</td>
+      <td>0</td>
+      <td>SOTON/O.Q. 3101262</td>
+      <td>7.2500</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>416</th>
+      <td>3</td>
+      <td>male</td>
+      <td>NaN</td>
+      <td>0</td>
+      <td>0</td>
+      <td>359309</td>
+      <td>8.0500</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>417</th>
+      <td>3</td>
+      <td>male</td>
+      <td>NaN</td>
+      <td>1</td>
+      <td>1</td>
+      <td>2668</td>
+      <td>22.3583</td>
+      <td>NaN</td>
+      <td>C</td>
+    </tr>
+  </tbody>
+</table>
+<p>418 rows × 9 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Dealing-with-missing-values">
+<a class="anchor" href="#Dealing-with-missing-values" aria-hidden="true"><span class="octicon octicon-link"></span></a>Dealing with missing values<a class="anchor-link" href="#Dealing-with-missing-values"> </a>
+</h4>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>Discard the column(if there are too many null values, or some critical information is missing)</li>
+<li>Discard the row(but this would make less training data)</li>
+<li>Imputation(with the mean, median, min, max, etc. value of other instances)</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Some-mathematical-transformations-on-features">
+<a class="anchor" href="#Some-mathematical-transformations-on-features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Some mathematical transformations on features<a class="anchor-link" href="#Some-mathematical-transformations-on-features"> </a>
+</h4>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>Normalization(make feature values between [0, 1])</li>
+<li>Standardization(with mean 0, vairance 1)</li>
+<li>Log-transformation(make feature values with smaller variation)</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Encoding-categorical-feature-columns">
+<a class="anchor" href="#Encoding-categorical-feature-columns" aria-hidden="true"><span class="octicon octicon-link"></span></a>Encoding categorical feature columns<a class="anchor-link" href="#Encoding-categorical-feature-columns"> </a>
+</h4>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>One-hot encoding(if the column values don't have meaningful ordinal information)</li>
+<li>Ordinal numbers</li>
+</ul>
 
 </div>
 </div>

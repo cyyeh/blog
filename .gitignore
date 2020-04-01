@@ -19,3 +19,4 @@ _notebooks/datasets
 .ipynb_checkpoints
 _notebooks/.ipynb_checkpoints
 settings.ini
+_notebooks/*.csv

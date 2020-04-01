@@ -143,6 +143,7 @@ window.onload = wrap_img;
 
   <div class="post-content e-content" itemprop="articleBody">
     <ul class="section-nav">
+<li class="toc-entry toc-h1"><a href="#Preface">Preface </a></li>
 <li class="toc-entry toc-h1"><a href="#Overview">Overview </a>
 <ul>
 <li class="toc-entry toc-h2"><a href="#Description">Description </a>
@@ -203,6 +204,23 @@ window.onload = wrap_img;
 </div>
     
 
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Preface">
+<a class="anchor" href="#Preface" aria-hidden="true"><span class="octicon octicon-link"></span></a>Preface<a class="anchor-link" href="#Preface"> </a>
+</h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This notebook demonstrates how I solve the Titanic problem on Kaggle. I will try my best to illustrate all steps I used to solve the problem. However, solving a machine learning problem takes a lot of steps, including understanding the problem, cleaning the data, exploration data analysis, feature engineering, machine learning algorithms, model evaluation and selection, evaluation metrics, etc. Actually each step can be a standalone topic for further investigation. Maybe I would write blog posts for these topics in the future.</p>
+
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -532,7 +550,7 @@ Etc.</code></pre>
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Downloading titanic.zip to /Users/cyyeh/Desktop/TYCS/blog/_notebooks
   0%|                                               | 0.00/34.1k [00:00&lt;?, ?B/s]
-100%|██████████████████████████████████████| 34.1k/34.1k [00:00&lt;00:00, 3.44MB/s]
+100%|██████████████████████████████████████| 34.1k/34.1k [00:00&lt;00:00, 4.52MB/s]
 Archive:  titanic.zip
   inflating: ./datasets/gender_submission.csv  
   inflating: ./datasets/test.csv     
@@ -3884,7 +3902,13 @@ Successfully submitted to Titanic: Machine Learning from Disaster</pre>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Why we need to use the pipeline approach?</p>
+<p>A pipeline allows you to chain multiple transformations of the data before you apply a final model.</p>
+<p>Why we need to use the pipeline approach? Before I answer this question, I would like to ask you a question first. Did you notice that there is a problem in the cross-validation process above? OK, let me tell you the truth. In the cross-validation process, the input data comes from the output of feature engineering process. During the cross-validation process, we split the input data into 5 splits, and take one of the splits as the validation data. In theory, validation data shouldn't know any information about training data; however, before we run the cross-validation, we apply all training data to feature engineering process, thus we leak information to validation data later. This condition would make us too optimistic. So maybe this is one of the reasons for overfitting.</p>
+<p>Now I am going to answer the first question I asked. There are several reasons that we use the pipeline approach:</p>
+<ol>
+<li>It makes code cleaner and more configurable</li>
+<li>It prevents you from making mistakes like what I just mensioned above.(Because all processing happen inside the pipeline loop)</li>
+</ol>
 
 </div>
 </div>

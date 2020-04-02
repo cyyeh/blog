@@ -432,6 +432,9 @@ Etc.</code></pre>
 <span class="kn">from</span> <span class="nn">sklearn.impute</span> <span class="kn">import</span> <span class="n">SimpleImputer</span>
 <span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LogisticRegression</span>
 <span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">StratifiedShuffleSplit</span><span class="p">,</span> <span class="n">cross_validate</span>
+<span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="kn">import</span> <span class="n">Pipeline</span>
+<span class="kn">from</span> <span class="nn">sklearn.compose</span> <span class="kn">import</span> <span class="n">ColumnTransformer</span>
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">OneHotEncoder</span><span class="p">,</span> <span class="n">OrdinalEncoder</span>
 
 <span class="kn">import</span> <span class="nn">csv</span>
 
@@ -550,7 +553,7 @@ Etc.</code></pre>
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Downloading titanic.zip to /Users/cyyeh/Desktop/TYCS/blog/_notebooks
   0%|                                               | 0.00/34.1k [00:00&lt;?, ?B/s]
-100%|██████████████████████████████████████| 34.1k/34.1k [00:00&lt;00:00, 4.52MB/s]
+100%|██████████████████████████████████████| 34.1k/34.1k [00:00&lt;00:00, 4.20MB/s]
 Archive:  titanic.zip
   inflating: ./datasets/gender_submission.csv  
   inflating: ./datasets/test.csv     
@@ -3906,13 +3909,102 @@ Successfully submitted to Titanic: Machine Learning from Disaster</pre>
 <p>Why we need to use the pipeline approach? Before I answer this question, I would like to ask you a question first. Did you notice that there is a problem in the cross-validation process above? OK, let me tell you the truth. In the cross-validation process, the input data comes from the output of feature engineering process. During the cross-validation process, we split the input data into 5 splits, and take one of the splits as the validation data. In theory, validation data shouldn't know any information about training data; however, before we run the cross-validation, we apply all training data to feature engineering process, thus we leak information to validation data later. This condition would make us too optimistic. So maybe this is one of the reasons for overfitting.</p>
 <p>Now I am going to answer the first question I asked. There are several reasons that we use the pipeline approach:</p>
 <ol>
-<li>It makes code cleaner and more configurable</li>
+<li>It makes code cleaner and more configurable.</li>
 <li>It prevents you from making mistakes like what I just mensioned above.(Because all processing happen inside the pipeline loop)</li>
 </ol>
 
 </div>
 </div>
 </div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<details class="description">
+      <summary class="btn btn-sm" data-open="Hide Code" data-close="Show Code"></summary>
+        <p></p>
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#collapse-hide</span>
+<span class="n">label</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'Survived'</span><span class="p">]</span>
+<span class="n">numeric_features</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'Age'</span><span class="p">,</span> <span class="s1">'SibSp'</span><span class="p">,</span> <span class="s1">'Parch'</span><span class="p">,</span> <span class="s1">'Fare'</span><span class="p">]</span>
+<span class="n">categorical_features</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'Pclass'</span><span class="p">,</span> <span class="s1">'Sex'</span><span class="p">,</span> <span class="s1">'Embarked'</span><span class="p">]</span>
+
+<span class="n">X_train</span> <span class="o">=</span> <span class="n">train_df</span><span class="p">[</span><span class="n">numeric_features</span> <span class="o">+</span> <span class="n">categorical_features</span><span class="p">]</span>
+<span class="n">y_train</span> <span class="o">=</span> <span class="n">train_df</span><span class="p">[</span><span class="n">label</span><span class="p">]</span>
+
+<span class="n">X_test</span> <span class="o">=</span> <span class="n">test_df</span><span class="p">[</span><span class="n">numeric_features</span> <span class="o">+</span> <span class="n">categorical_features</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="n">categorical_features</span><span class="p">:</span>
+    <span class="n">X_train</span><span class="p">[</span><span class="n">cat</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="s1">'missing'</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">X_test</span><span class="p">[</span><span class="n">cat</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="s1">'missing'</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    
+<span class="n">numeric_transformer</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="p">[</span>
+    <span class="p">(</span><span class="s1">'imputer'</span><span class="p">,</span> <span class="n">SimpleImputer</span><span class="p">(</span><span class="n">missing_values</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">strategy</span><span class="o">=</span><span class="s1">'median'</span><span class="p">))</span>
+<span class="p">])</span>
+<span class="n">col_transformer</span> <span class="o">=</span> <span class="n">ColumnTransformer</span><span class="p">(</span>
+    <span class="n">transformers</span><span class="o">=</span><span class="p">[</span>
+        <span class="p">(</span><span class="s1">'onehot'</span><span class="p">,</span> <span class="n">OneHotEncoder</span><span class="p">(</span><span class="n">handle_unknown</span><span class="o">=</span><span class="s1">'ignore'</span><span class="p">),</span> <span class="p">[</span><span class="s1">'Embarked'</span><span class="p">]),</span>
+        <span class="p">(</span><span class="s1">'ordinal'</span><span class="p">,</span> <span class="n">OrdinalEncoder</span><span class="p">(),</span> <span class="p">[</span><span class="s1">'Sex'</span><span class="p">])</span>
+    <span class="p">],</span>
+    <span class="n">remainder</span><span class="o">=</span><span class="s1">'passthrough'</span>                                 
+<span class="p">)</span>
+<span class="n">categorical_transformer</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="p">[</span>
+    <span class="p">(</span><span class="s1">'col'</span><span class="p">,</span> <span class="n">col_transformer</span><span class="p">)</span>
+<span class="p">])</span>
+
+<span class="n">preprocessor</span> <span class="o">=</span> <span class="n">ColumnTransformer</span><span class="p">(</span><span class="n">transformers</span><span class="o">=</span><span class="p">[</span>
+    <span class="p">(</span><span class="s1">'num'</span><span class="p">,</span> <span class="n">numeric_transformer</span><span class="p">,</span> <span class="n">numeric_features</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">'cat'</span><span class="p">,</span> <span class="n">categorical_transformer</span><span class="p">,</span> <span class="n">categorical_features</span><span class="p">),</span>
+<span class="p">])</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="p">[</span>
+    <span class="p">(</span><span class="s1">'preprocessor'</span><span class="p">,</span> <span class="n">preprocessor</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">'clf'</span><span class="p">,</span> <span class="n">LogisticRegression</span><span class="p">())</span>
+<span class="p">])</span>
+
+<span class="n">sss</span> <span class="o">=</span> <span class="n">StratifiedShuffleSplit</span><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">validation_results</span> <span class="o">=</span> <span class="n">cross_validate</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="n">sss</span><span class="p">,</span> <span class="n">return_estimator</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">estimators</span><span class="p">,</span> <span class="n">test_scores</span> <span class="o">=</span> <span class="n">validation_results</span><span class="p">[</span><span class="s1">'estimator'</span><span class="p">],</span> <span class="n">validation_results</span><span class="p">[</span><span class="s1">'test_score'</span><span class="p">]</span>
+
+<span class="n">test_scores</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"mean accuracy: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">test_scores</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+    </details>
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([0.77130045, 0.81165919, 0.81165919, 0.79372197, 0.80269058])</pre>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>mean accuracy: 0.7982062780269057
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">

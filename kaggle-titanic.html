@@ -183,7 +183,12 @@ window.onload = wrap_img;
 <li class="toc-entry toc-h3"><a href="#Baseline-Model">Baseline Model </a></li>
 </ul>
 </li>
-<li class="toc-entry toc-h2"><a href="#The-Pragmatic-Approach:-Pipeline">The Pragmatic Approach: Pipeline </a></li>
+<li class="toc-entry toc-h2"><a href="#The-Pragmatic-Approaches">The Pragmatic Approaches </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#ColumnTransformer-and-Pipeline">ColumnTransformer and Pipeline </a></li>
+<li class="toc-entry toc-h3"><a href="#GridSearch">GridSearch </a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toc-entry toc-h1"><a href="#Reference">Reference </a></li>
@@ -3896,8 +3901,8 @@ Successfully submitted to Titanic: Machine Learning from Disaster</pre>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="The-Pragmatic-Approach:-Pipeline">
-<a class="anchor" href="#The-Pragmatic-Approach:-Pipeline" aria-hidden="true"><span class="octicon octicon-link"></span></a>The Pragmatic Approach: Pipeline<a class="anchor-link" href="#The-Pragmatic-Approach:-Pipeline"> </a>
+<h2 id="The-Pragmatic-Approaches">
+<a class="anchor" href="#The-Pragmatic-Approaches" aria-hidden="true"><span class="octicon octicon-link"></span></a>The Pragmatic Approaches<a class="anchor-link" href="#The-Pragmatic-Approaches"> </a>
 </h2>
 </div>
 </div>
@@ -3905,6 +3910,7 @@ Successfully submitted to Titanic: Machine Learning from Disaster</pre>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<p>Now I am going to show you some pragmatic approaches to solve machine learning problems.</p>
 <p>A pipeline allows you to chain multiple transformations of the data before you apply a final model.</p>
 <p>Why we need to use the pipeline approach? Before I answer this question, I would like to ask you a question first. Did you notice that there is a problem in the cross-validation process above? OK, let me tell you the truth. In the cross-validation process, the input data comes from the output of feature engineering process. During the cross-validation process, we split the input data into 5 splits, and take one of the splits as the validation data. In theory, validation data shouldn't know any information about training data; however, before we run the cross-validation, we apply all training data to feature engineering process, thus we leak information to validation data later. This condition would make us too optimistic. So maybe this is one of the reasons for overfitting.</p>
 <p>Now I am going to answer the first question I asked. There are several reasons that we use the pipeline approach:</p>
@@ -3913,6 +3919,15 @@ Successfully submitted to Titanic: Machine Learning from Disaster</pre>
 <li>It prevents you from making mistakes like what I just mensioned above.(Because all processing happen inside the pipeline loop)</li>
 </ol>
 
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="ColumnTransformer-and-Pipeline">
+<a class="anchor" href="#ColumnTransformer-and-Pipeline" aria-hidden="true"><span class="octicon octicon-link"></span></a>ColumnTransformer and Pipeline<a class="anchor-link" href="#ColumnTransformer-and-Pipeline"> </a>
+</h3>
 </div>
 </div>
 </div>
@@ -4005,6 +4020,31 @@ Successfully submitted to Titanic: Machine Learning from Disaster</pre>
 </div>
     
 
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now you've seen how pipeline looks like! Remember what I said earlier that the machine learning process is iterative, and we always need to figure out ways to make prediction performance better based on the evaluation metric. Now we've already implemented the baseline model; however, it shouldn't be the end of the journey. Since we can and should try different parameters or models to make the better performance, next problem is how can we do it the right way? As it turns out, there is some good functionalities in sklearn, so now I am going to show this feature to you.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="GridSearch">
+<a class="anchor" href="#GridSearch" aria-hidden="true"><span class="octicon octicon-link"></span></a>GridSearch<a class="anchor-link" href="#GridSearch"> </a>
+</h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>GridSearch makes us define the grid of (hyper)parameters to help us navigate through these parameters and find out the set of parameters that make the best model performance.</p>
+
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
